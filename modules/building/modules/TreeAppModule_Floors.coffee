@@ -47,7 +47,7 @@ class TreeAppModule_Floors extends TreeAppModule
                             { o: +1, e: new Element_Line [ 2, 3 ] }
                             { o: +1, e: new Element_Line [ 3, 0 ] }
                         ]
-
+                        floor.draw_edge_3d()
 
 
         # delete a floor

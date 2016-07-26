@@ -9,7 +9,7 @@ class BuildingItem extends TreeItem
         @add_attr
             display:
                 mode: new Choice( 0, [ "2D", "3D" ])
-                style: new Choice( 3, [ "Points", "Wireframe", "Surface", "Surface with edges" ])
+                style: new Choice( 2, [ "Wireframe", "Surface", "Surface with edges" ])
        
        
         @bind =>

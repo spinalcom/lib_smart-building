@@ -7,18 +7,39 @@ class ZoneItem extends TreeItem
         @_name.set name
         @_viewable.set true        
         
-        # attributes
+        # global attributes
         @add_attr
             name: @_name
             ID: num + id
             _num: num
+           
+        # mesh attributes
+        @add_attr
             _mesh: new Mesh
-            _center: new PointMesher [ 0, 0, 0 ], 2, 4 
-            _mesh_2d: new Mesh( non_editable: true )
-            _mesh_3d: new Mesh( non_editable: true )
+            _center: new PointMesher [ 0, @_num.get()*4, 0 ], 2, 4 
+            _mesh_2d: new Mesh( not_editable: true )
+            _edge_3d: new Mesh( not_editable: true )
+            _mesh_3d: new Mesh( not_editable: true )
         
+        # mesh conditions
         @_mesh_2d.points = @_mesh.points
+        @_mesh_3d.points = @_edge_3d.points
         
+        @_mesh_3d.visualization.element_color.r = @_mesh_2d.visualization.element_color.r
+        @_mesh_3d.visualization.element_color.g = @_mesh_2d.visualization.element_color.g
+        @_mesh_3d.visualization.element_color.b = @_mesh_2d.visualization.element_color.b
+        @_mesh_3d.visualization.element_color.a = @_mesh_2d.visualization.element_color.a
+
+        @_edge_3d.visualization.line_color.r = @_mesh.visualization.line_color.r
+        @_edge_3d.visualization.line_color.g = @_mesh.visualization.line_color.g
+        @_edge_3d.visualization.line_color.b = @_mesh.visualization.line_color.b
+        @_edge_3d.visualization.line_color.a = @_mesh.visualization.line_color.a
+        
+        @_mesh_2d.visualization.display_style.num.set 2
+        @_mesh_3d.visualization.display_style.num.set 2
+        @_edge_3d.visualization.display_style.num.set 1        
+        
+        # display attributes
         @add_attr
             display:
                 surface_color: @_mesh_2d.visualization.element_color
@@ -27,10 +48,12 @@ class ZoneItem extends TreeItem
                 _mode: 0
                 _style: 0
                 
+        # points display attributes
         @add_attr
             center: @_center.point
             points: @_mesh.points
             
+        # update attributes
         @add_attr
             _old_center : new Point
             _center_changed: new Model
@@ -38,14 +61,13 @@ class ZoneItem extends TreeItem
 
         @_old_center.pos.set @center.pos.get()
 
-        @_mesh_3d.visualization.element_color = @_mesh_2d.visualization.element_color
-        @_mesh_3d.visualization.line_color = @_mesh.visualization.line_color
-        @_mesh_2d.visualization.display_style.num.set 2
+
 
     draw: ( info ) ->
         
         # quand on crée/déplace les points du contour du mesh
         if ( @_mesh.points.has_been_modified() or @_num.has_been_modified() ) and not @_center_changed.has_been_directly_modified()
+        
             bc = @_mesh.bounding_coordinates()
             @center.pos[0].set (bc[0][0]+bc[0][1])/2
             @center.pos[1].set @_num.get()*4
@@ -58,17 +80,24 @@ class ZoneItem extends TreeItem
                     p.pos[1].set @_num.get()*4
                     
             if @_mesh_2d then @draw_mesh_2d()
+            if @_edge_3d then @draw_edge_3d()
+            if @_mesh_3d then @draw_mesh_3d()
             
             @_old_center.pos.set @center.pos.get()
             @_mesh_shape_changed._signal_change()
 
         # quand on déplace le centre du mesh
         if @center.has_been_modified() and not @_mesh_shape_changed.has_been_directly_modified()
+
             @center._mv = new MoveScheme_2D_Y @_num.get()*4        
             move = Vec_3.sub @center.pos.get(), @_old_center.pos.get()
+            
             for p in @_mesh.points
                 p.pos.set( Vec_3.add p.pos.get(), move )
-                
+            @_mesh_2d?._signal_change()
+            
+            if @_edge_3d then @draw_edge_3d()
+            
             @_old_center.pos.set @center.pos.get() 
             @_center_changed._signal_change()
             
@@ -77,7 +106,7 @@ class ZoneItem extends TreeItem
 
     draw_mesh_2d: () ->
         tri_lst = []
-        
+
         # boucle sur les lignes du mesh
         for segment in @_mesh._elements[0].boundaries
             ind_t1 = segment.e.indices[0].get()
@@ -263,8 +292,89 @@ class ZoneItem extends TreeItem
             return false
 
 
+
+    draw_edge_3d: () ->
+        @_edge_3d.clear()
+        
+        # points 3d
+        for p in @_mesh.points
+            @_edge_3d.points.push p
+        for p in @_mesh.points
+            pp = new Point [ p.pos[0], (@_num.get()+0.99)*4, p.pos[2] ]
+            @_edge_3d.points.push pp
+            
+        nb_pts_2d = @_mesh.points.length
+        nb_lines_2d = @_mesh._elements[0].boundaries.length
+        
+        # contour plafond
+        el = new Element_BoundedSurf
+        for line in @_mesh._elements[0].boundaries
+            m = { o: +1, e: new Element_Line [ line.e.indices[0].get() + nb_pts_2d, line.e.indices[1].get() + nb_pts_2d ] }
+            el.boundaries.push m
+        @_edge_3d.add_element el
+        
+        # segments murs
+        for i in [ 0 ... nb_pts_2d ]
+            li = new Element_Line [ i, i + nb_pts_2d ]
+            @_edge_3d.add_element li
+
+
+    draw_mesh_3d: () ->
+        @_mesh_3d._elements.clear()
+        
+        # maillage du plafond
+        el = new Element_TriangleList
+        nb_elems_2d = @_mesh_2d._elements[0].indices._size[1]
+        nb_pts_2d = @_mesh_2d.points.length
+        
+        el.indices.resize [ 3, 2*nb_elems_2d ]
+        for i in [ 0 ... nb_elems_2d ]
+            el.indices.set_val [ 0, i ], @_mesh_2d._elements[0].indices.get 3*i
+            el.indices.set_val [ 1, i ], @_mesh_2d._elements[0].indices.get 3*i + 1
+            el.indices.set_val [ 2, i ], @_mesh_2d._elements[0].indices.get 3*i + 2
+            
+            el.indices.set_val [ 0, i + nb_elems_2d ], @_mesh_2d._elements[0].indices.get( 3*i ) + nb_pts_2d
+            el.indices.set_val [ 1, i + nb_elems_2d ], @_mesh_2d._elements[0].indices.get( 3*i + 1 ) + nb_pts_2d
+            el.indices.set_val [ 2, i + nb_elems_2d ], @_mesh_2d._elements[0].indices.get( 3*i + 2 ) + nb_pts_2d           
+            
+        @_mesh_3d.add_element el
+        
+        # maillage des côtés
+        el_side = new Element_Q4List
+        el_side.indices.resize [ 4, nb_pts_2d ]
+        
+        
+        console.log @_edge_3d
+        for i in [ 0 ... @_mesh._elements[0].boundaries.length ]
+            el_side.indices.set_val [ 0, i ], @_mesh._elements[0].boundaries[i].e.indices[0].get()
+            el_side.indices.set_val [ 1, i ], @_mesh._elements[0].boundaries[i].e.indices[1].get()
+            el_side.indices.set_val [ 2, i ], @_edge_3d._elements[0].boundaries[i].e.indices[1].get()
+            el_side.indices.set_val [ 3, i ], @_edge_3d._elements[0].boundaries[i].e.indices[0].get()
+
+#         for i in [ 0 ... nb_pts_2d-1 ]
+#             console.log @_mesh_3d._elements[0].indices.get(i), @_mesh_3d._elements[0].indices.get(i+1), @_mesh_3d._elements[0].indices.get(i + nb_pts_2d + 1), @_mesh_3d._elements[0].indices.get(i + nb_pts_2d) 
+#             el_side.indices.set_val [ 0, i ], @_mesh_3d._elements[0].indices.get i
+#             el_side.indices.set_val [ 1, i ], @_mesh_3d._elements[0].indices.get i + 1
+#             el_side.indices.set_val [ 2, i ], @_mesh_3d._elements[0].indices.get( i + 2*nb_pts_2d + 1 )        
+#             el_side.indices.set_val [ 3, i ], @_mesh_3d._elements[0].indices.get( i + 2*nb_pts_2d )
+
+        @_mesh_3d.add_element el_side
+        console.log @_mesh_3d
+        
+        
 #     display_suppl_context_actions: ( context_action )  ->
-#         context_action.push new TreeAppModule_Mesher
+#         context_action.push new TreeAppModule_DelPoint
+#         suppr = new TreeAppModule
+#         suppr.visible = false
+#         suppr =
+#             txt: "Suppr"
+#             key: "S"
+#             fun: ( evt, app ) =>
+#                 app.undo_manager.snapshot()
+#                 console.log evt
+#                 console.log "G!!!"
+#     
+#         context_action.push suppr
 #         context_action.push new TreeAppModule_Sketch
         #context_action.push new TreeAppModule_Transform
     
@@ -274,14 +384,21 @@ class ZoneItem extends TreeItem
     sub_canvas_items: ->
         lst = []      
         
-        if @display._style.get() == 0 or @display._style.get() == 1 or @display._style.get() == 3
+        # affichage mesh 2d
+        if @display._style.get() == 0 or @display._style.get() == 2
             lst.push @_mesh
-        if (@display._style.get() == 2 or @display._style.get() == 3) and @_mesh_2d
+        if @display._mode.get() == 0 and (@display._style.get() == 1 or @display._style.get() == 2) and @_mesh_2d
             lst.push @_mesh_2d
+            
+        # affichage mesh 3d
+        if @display._mode.get() == 1 and ( @display._style.get() == 0 or @display._style.get() == 2 )
+            lst.push @_edge_3d
+        if @display._mode.get() == 1 and ( @display._style.get() == 1 or @display._style.get() == 2 ) and @_mesh_3d
+            lst.push @_mesh_3d
             
         # affichage du centre
         app_data = @get_app_data()
-        if @display.show_center.get() == true and app_data.selected_tree_items[0][ app_data.selected_tree_items[0].length-1 ].model_id == @model_id
+        if @display.show_center.get() == true and app_data.selected_tree_items[0]?[ app_data.selected_tree_items[0].length-1 ].model_id == @model_id
             lst.push @_center
         return lst
         

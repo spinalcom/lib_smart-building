@@ -8,10 +8,16 @@ class TreeAppModule_Zones extends TreeAppModule
         _ina = ( app ) =>
             app.data.focus.get() != app.selected_canvas_inst()?[ 0 ]?.cm.view_id
 
+#         _ctx_act = ( act ) =>
+#             if act.sub?
+#                 return false
+#             else
+#                 return true
 
         @actions.push 
             txt: "Add a zone"
             ico: "img/glyphicons-191-plus-sign.png"
+            key: [ "G" ]
             fun: ( evt, app ) =>
                 app.undo_manager.snapshot()
                 for path in app.data.selected_tree_items
@@ -37,10 +43,8 @@ class TreeAppModule_Zones extends TreeAppModule
                             { o: +1, e: new Element_Line [ 3, 0 ] }
                         ]
                         zone.draw_mesh_2d()
-
-
-
-
+                        zone.draw_edge_3d()
+                        zone.draw_mesh_3d()
 
 
         # delete a zone
