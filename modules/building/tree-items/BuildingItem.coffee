@@ -23,13 +23,6 @@ class BuildingItem extends TreeItem
                     for zone in @_children[i]._children
                         zone.display._mode = @display.mode.num
                         zone.display._style = @display.style.num
-                        
-#             if @geometry.has_been_modified()
-#                 for floor in @_children
-#                     floor._height.set @geometry.floor_height.get()
-#                     for zone in floor._children
-#                         zone._height.set @geometry.floor_height.get()
-                
     
     
     display_suppl_context_actions: ( context_action )  ->

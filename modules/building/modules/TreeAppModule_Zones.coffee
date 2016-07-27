@@ -34,7 +34,7 @@ class TreeAppModule_Zones extends TreeAppModule
                         zone._height = floor._height
                         for coord in [ [ -0.25, -0.25 ], [ 0.25, -0.25 ], [ 0.25, 0.25 ], [ -0.25, 0.25 ] ]
                             point = app.selected_canvas_inst()[ 0 ].cm.cam.get_screen_coord coord
-                            point[2] = zone._num.get() * zone._height.get()
+                            point[2] = - zone._num.get() * zone._height.get()
                             zone._mesh.add_point point                              
                         
 #                         zone._mesh.add_point [ -10, -10, zone._num.get() * 4 ]
@@ -50,8 +50,8 @@ class TreeAppModule_Zones extends TreeAppModule
                         ]
 
                         # pour savoir dans quel sens est l'axe Z en fonction de la camera ( Session -> Display settings -> View -> cam )
-                        orientation = app.data.tree_items[0]._children[0]._children[0].cam.Y[1].get()
-                        zone.draw_mesh_2d orientation
+                        zone._orientation.set app.data.tree_items[0]._children[0]._children[0].cam.Y[1].get()
+                        zone.draw_mesh_2d()
                         zone.draw_edge_3d()
                         zone.draw_mesh_3d()
                         zone.update_center()

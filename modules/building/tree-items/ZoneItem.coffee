@@ -1,5 +1,5 @@
 #
-class ZoneItem extends TreeItem
+class ZoneItem extends TreeItem_Parametric
     constructor: ( name = "Zone", num = 0, id = 0 ) ->
         super()
         
@@ -13,11 +13,12 @@ class ZoneItem extends TreeItem
             ID: num + id
             _num: num
             _height: 4
+            _orientation: 1
            
         # mesh attributes
         @add_attr
             _mesh: new Mesh
-            _center: new PointMesher [ 0, 0, @_num.get() * @_height.get() ], 2, 4 
+            _center: new PointMesher [ 0, 0, - @_num.get() * @_height.get() ], 2, 4 
             _mesh_2d: new Mesh( not_editable: true )
             _edge_3d: new Mesh( not_editable: true )
             _mesh_3d: new Mesh( not_editable: true )
@@ -71,14 +72,14 @@ class ZoneItem extends TreeItem
             
             for p in @_mesh.points
                 if p.has_been_modified()
-                    p._mv = new MoveScheme_2D_Z @_num.get()*@_height.get()
+                    p._mv = new MoveScheme_2D_Z( - @_num.get()*@_height.get() )
                 if @_num.has_been_modified() or @_height.has_been_modified() #or p.pos[1].get() != @_num.get()*@_height.get()
-                    p.pos[2].set @_num.get()*@_height.get()
+                    p.pos[2].set( - @_num.get() * @_height.get() )
                     
-            # pour savoir dans quel sens est l'axe Z en fonction de la camera
-            orientation = info.cam.Y[1].get() 
+#             # pour savoir dans quel sens est l'axe Z en fonction de la camera
+#             orientation = info.cam.Y[1].get() 
             
-            if @_mesh_2d then @draw_mesh_2d orientation
+            if @_mesh_2d then @draw_mesh_2d()
             if @_edge_3d then @draw_edge_3d()
             if @_mesh_2d and @_mesh_3d then @draw_mesh_3d()
             
@@ -89,7 +90,7 @@ class ZoneItem extends TreeItem
         # quand on déplace le centre du mesh
         if @center.has_been_modified() and not @_mesh_shape_changed.has_been_directly_modified()
 
-            @center._mv = new MoveScheme_2D_Z @_num.get()*@_height.get()        
+            @center._mv = new MoveScheme_2D_Z( - @_num.get()*@_height.get() )       
             move = Vec_3.sub @center.pos.get(), @_old_center.pos.get()
             
             for p in @_mesh.points
@@ -107,12 +108,12 @@ class ZoneItem extends TreeItem
         bc = @_mesh.bounding_coordinates()
         @center.pos[0].set (bc[0][0]+bc[0][1])/2
         @center.pos[1].set (bc[1][0]+bc[1][1])/2 
-        @center.pos[2].set @_num.get()*@_height.get()   
+        @center.pos[2].set - @_num.get() * @_height.get()   
         @_old_center.pos.set @center.pos.get()
             
             
             
-    draw_mesh_2d: ( orientation ) ->
+    draw_mesh_2d: () ->
         tri_lst = []
         
         # boucle sur les lignes du mesh
@@ -132,7 +133,7 @@ class ZoneItem extends TreeItem
 
                 # cond1: test si triangle pt1pt2pt3 direct                
                 pvZ = Vec_3.cro( Vec_3.sub( pt2, pt1 ), Vec_3.sub( pt3, pt2 ) )[2]
-                if ( pvZ <= 0 and orientation <=0 ) or ( pvZ >= 0 and orientation >=0 )
+                if ( pvZ <= 0 and @_orientation.get() <=0 ) or ( pvZ >= 0 and @_orientation.get() >=0 )
                     cond1 = true
 
                 # cond2: test si triangle pt1pt2pt3 ne coupe aucun segment
@@ -308,7 +309,7 @@ class ZoneItem extends TreeItem
         for p in @_mesh.points
             @_edge_3d.points.push p
         for p in @_mesh.points
-            pp = new Point [ p.pos[0], p.pos[1], (@_num.get()+0.99)*@_height.get() ]
+            pp = new Point [ p.pos[0], p.pos[1], - (@_num.get()+0.99) * @_height.get() ]
             @_edge_3d.points.push pp
             
         nb_pts_2d = @_mesh.points.length

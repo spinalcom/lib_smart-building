@@ -8,18 +8,6 @@ class TreeAppModule_Floors extends TreeAppModule
         _ina = ( app ) =>
             app.data.focus.get() != app.selected_canvas_inst()?[ 0 ]?.cm.view_id
 
-        # add a floor
-#         @actions.push
-#             txt: "Add a floor"
-#             ico: "img/glyphicons-191-plus-sign.png"
-#             fun: ( evt, app ) =>
-#                 for path in app.data.selected_tree_items
-#                     building = path[ path.length - 1 ]
-#                     if building instanceof BuildingItem 
-#                         id = building._children.length
-#                         floor = new FloorItem ("Floor " + id), id
-#                         building.add_child floor
-#                         app.data.watch_item floor
 
         @actions.push 
             txt: "Add a floor"
@@ -37,10 +25,9 @@ class TreeAppModule_Floors extends TreeAppModule
                         floor._mesh.visualization.display_style.set "Wireframe"
                         
                         floor._height = building.geometry.floor_height
-                        console.log floor._height.get()
                         for coord in [ [ -0.333, -0.333 ], [ 0.333, -0.333 ], [ 0.333, 0.333 ], [ -0.333, 0.333 ] ]
                             point = app.selected_canvas_inst()[ 0 ].cm.cam.get_screen_coord coord
-                            point[2] = floor._num.get() * floor._height.get()
+                            point[2] = - floor._num.get() * floor._height.get()
                             floor._mesh.add_point point                        
                         
 #                         floor._mesh.add_point [ -50, -50, floor._num.get() * 4 ]
