@@ -11,17 +11,18 @@ class TreeAppModule_DelPoint extends TreeAppModule
 
 
         @actions.push
-            txt: ""
+            txt: "Delete point"
+            ico: "img/glyphicons-426-git-delete.png"
+            siz: 1
             key: [ "Del" ]
             ina: _ina
             vis: false
             fun: ( evt, app ) =>
-                console.log "del point"
                 app.undo_manager.snapshot()
                 cam_info = app.selected_canvas_inst()[ 0 ].cm.cam_info                    
                 for it in app.data.get_selected_tree_items() when it instanceof ZoneItem
                     if it._mesh?
                         it._mesh.delete_selected_point cam_info
-                        
+                        console.log it._mesh
 
                                

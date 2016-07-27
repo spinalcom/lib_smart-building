@@ -36,10 +36,17 @@ class TreeAppModule_Floors extends TreeAppModule
                         
                         floor._mesh.visualization.display_style.set "Wireframe"
                         
-                        floor._mesh.add_point [ -50, floor._num.get() * 4, -50 ]
-                        floor._mesh.add_point [ 50, floor._num.get() * 4, -50 ]
-                        floor._mesh.add_point [ 50, floor._num.get() * 4, 50 ]
-                        floor._mesh.add_point [ -50, floor._num.get() * 4, 50 ]
+                        floor._height = building.geometry.floor_height
+                        console.log floor._height.get()
+                        for coord in [ [ -0.333, -0.333 ], [ 0.333, -0.333 ], [ 0.333, 0.333 ], [ -0.333, 0.333 ] ]
+                            point = app.selected_canvas_inst()[ 0 ].cm.cam.get_screen_coord coord
+                            point[2] = floor._num.get() * floor._height.get()
+                            floor._mesh.add_point point                        
+                        
+#                         floor._mesh.add_point [ -50, -50, floor._num.get() * 4 ]
+#                         floor._mesh.add_point [ 50, -50, floor._num.get() * 4 ]
+#                         floor._mesh.add_point [ 50, 50, floor._num.get() * 4 ]
+#                         floor._mesh.add_point [ -50, 50, floor._num.get() * 4 ]
                         
                         floor._mesh.add_element new Element_BoundedSurf [
                             { o: +1, e: new Element_Line [ 0, 1 ] }
@@ -48,7 +55,7 @@ class TreeAppModule_Floors extends TreeAppModule
                             { o: +1, e: new Element_Line [ 3, 0 ] }
                         ]
                         floor.draw_edge_3d()
-
+                        floor.update_center()
 
         # delete a floor
         @actions.push

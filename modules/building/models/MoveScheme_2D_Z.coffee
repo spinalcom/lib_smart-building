@@ -18,13 +18,13 @@
 
 
 # 
-class MoveScheme_2D_Y extends Model
+class MoveScheme_2D_Z extends Model
     constructor: ( height ) ->
         super()
         
         @add_attr
-            _O : new Vec_3 [ 0, height, 0 ]
-            _N : new Vec_3 [ 0, 1, 0 ]
+            _O : new Vec_3 [ 0, 0, height ]
+            _N : new Vec_3 [ 0, 0, 1 ]
     
             
     beg_click: ( pos ) ->

@@ -10,7 +10,8 @@ class BuildingItem extends TreeItem
             display:
                 mode: new Choice( 0, [ "2D", "3D" ])
                 style: new Choice( 2, [ "Wireframe", "Surface", "Surface with edges" ])
-       
+            geometry:
+                floor_height: 4
        
         @bind =>
             if @_children.has_been_modified()
@@ -22,6 +23,14 @@ class BuildingItem extends TreeItem
                     for zone in @_children[i]._children
                         zone.display._mode = @display.mode.num
                         zone.display._style = @display.style.num
+                        
+#             if @geometry.has_been_modified()
+#                 for floor in @_children
+#                     floor._height.set @geometry.floor_height.get()
+#                     for zone in floor._children
+#                         zone._height.set @geometry.floor_height.get()
+                
+    
     
     display_suppl_context_actions: ( context_action )  ->
         context_action.push new TreeAppModule_Floors
