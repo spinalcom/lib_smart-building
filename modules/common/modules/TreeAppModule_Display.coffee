@@ -7,7 +7,7 @@ class TreeAppModule_Display extends TreeAppModule
 
         @actions.push 
             txt: "Display children"
-            ico: "img/glyphicons-52-eye-open.png"
+            fa : "fa-eye"
             fun: ( evt, app ) =>
                 app.undo_manager.snapshot()
                 for path in app.data.selected_tree_items
@@ -16,7 +16,7 @@ class TreeAppModule_Display extends TreeAppModule
 
         @actions.push 
             txt: "Hide children"
-            ico: "img/glyphicons-53-eye-close.png"
+            fa : "fa-eye-slash"
             fun: ( evt, app ) =>
                 app.undo_manager.snapshot()
                 for path in app.data.selected_tree_items

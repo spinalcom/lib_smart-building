@@ -11,7 +11,8 @@ class TreeAppModule_Floors extends TreeAppModule
 
         @actions.push 
             txt: "Add a floor"
-            ico: "img/glyphicons-191-plus-sign.png"
+            fa: "fa-plus-square"
+#             ico: "img/ca_plus.png"
             fun: ( evt, app ) =>
                 app.undo_manager.snapshot()
                 for path in app.data.selected_tree_items
@@ -47,7 +48,7 @@ class TreeAppModule_Floors extends TreeAppModule
         # delete a floor
         @actions.push
             txt: "Delete the last floor"
-            ico: "img/glyphicons-192-minus-sign.png"
+            fa: "fa-minus-square"
             fun: ( evt, app ) =>
                 for path in app.data.selected_tree_items
                     building = path[ path.length - 1 ]

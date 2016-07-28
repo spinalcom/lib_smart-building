@@ -12,7 +12,7 @@ class TreeAppModule_DelPoint extends TreeAppModule
 
         @actions.push
             txt: "Delete point"
-            ico: "img/glyphicons-426-git-delete.png"
+            fa : "fa-eraser"
             siz: 1
             key: [ "Del" ]
             ina: _ina

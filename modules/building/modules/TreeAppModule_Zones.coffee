@@ -16,7 +16,7 @@ class TreeAppModule_Zones extends TreeAppModule
 
         @actions.push 
             txt: "Add a zone"
-            ico: "img/glyphicons-191-plus-sign.png"
+            fa : "fa-plus-square"
             key: [ "G" ]
             fun: ( evt, app ) =>
                 app.undo_manager.snapshot()
