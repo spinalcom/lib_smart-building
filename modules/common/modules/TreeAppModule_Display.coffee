@@ -28,8 +28,10 @@ class TreeAppModule_Display extends TreeAppModule
         app.data.watch_item item
         for child in item._children
             @display_item app, child
-           
-           
+        for output in item._output
+            @display_item app, output
+            
+            
     hide_item: ( app, item ) ->
         for p in app.data.panel_id_list()  
             if app.data.visible_tree_items[ p ]?        
@@ -39,3 +41,5 @@ class TreeAppModule_Display extends TreeAppModule
                         break
         for child in item._children
             @hide_item app, child
+        for output in item._output
+            @hide_item app, output

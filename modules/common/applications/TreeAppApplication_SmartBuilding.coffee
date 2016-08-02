@@ -14,7 +14,5 @@ class TreeAppApplication_SmartBuilding extends TreeAppApplication
             ina: _ina
             fun: ( evt, app ) =>
                 app.undo_manager.snapshot()
-                building = @add_item_depending_selected_tree app.data, BuildingItem
-                people = @add_item_depending_selected_tree app.data, PeopleItem
-                sensors = @add_item_depending_selected_tree app.data, SensorsNetworkItem
-                events = @add_item_depending_selected_tree app.data, EventsListItem
+                building = @add_item_depending_selected_tree app.data, SmartBuildingItem
+

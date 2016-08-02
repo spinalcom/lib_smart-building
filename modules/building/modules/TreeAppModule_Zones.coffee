@@ -32,9 +32,9 @@ class TreeAppModule_Zones extends TreeAppModule
                         zone._mesh.visualization.display_style.set "Wireframe"
                         
                         zone._height = floor._height
-                        for coord in [ [ -0.25, -0.25 ], [ 0.25, -0.25 ], [ 0.25, 0.25 ], [ -0.25, 0.25 ] ]
+                        for coord in [ [ -0.1, -0.1 ], [ 0.1, -0.1 ], [ 0.1, 0.1 ], [ -0.1, 0.1 ] ]
                             point = app.selected_canvas_inst()[ 0 ].cm.cam.get_screen_coord coord
-                            point[2] = - zone._num.get() * zone._height.get()
+                            point[2] = zone._num.get() * zone._height.get()
                             zone._mesh.add_point point                              
                         
 #                         zone._mesh.add_point [ -10, -10, zone._num.get() * 4 ]

@@ -28,7 +28,7 @@ class TreeAppModule_Floors extends TreeAppModule
                         floor._height = building.geometry.floor_height
                         for coord in [ [ -0.333, -0.333 ], [ 0.333, -0.333 ], [ 0.333, 0.333 ], [ -0.333, 0.333 ] ]
                             point = app.selected_canvas_inst()[ 0 ].cm.cam.get_screen_coord coord
-                            point[2] = - floor._num.get() * floor._height.get()
+                            point[2] = floor._num.get() * floor._height.get()
                             floor._mesh.add_point point                        
                         
 #                         floor._mesh.add_point [ -50, -50, floor._num.get() * 4 ]
