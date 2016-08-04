@@ -11,7 +11,7 @@ class BuildingItem extends TreeItem
                 mode: new Choice( 0, [ "2D", "3D" ])
                 style: new Choice( 2, [ "Wireframe", "Surface", "Surface with edges" ])
             geometry:
-                floor_height: 4
+                floor_height: 1
        
         @bind =>
             if @_children.has_been_modified()

@@ -66,6 +66,11 @@ class ZoneItem extends TreeItem_Parametric
 
 
     draw: ( info ) ->
+        # quand on glisse-depose un capteur/user sous la zone
+        if @_children.has_been_modified()
+            for ch in @_children when ( ch instanceof SensorItem or ch instanceof UserItem )
+                ch.update_zone this        
+        
         
         # quand on crée/déplace les points du contour du mesh
         if ( @_mesh.points.has_been_modified() or @_num.has_been_modified() or @_height.has_been_modified() ) and not @_center_changed.has_been_directly_modified()
@@ -387,7 +392,8 @@ class ZoneItem extends TreeItem_Parametric
         #context_action.push new TreeAppModule_Transform
     
     accept_child: ( ch ) ->
-        false
+        ch instanceof SensorItem or
+        ch instanceof UserItem
         
     sub_canvas_items: ->
         lst = []      

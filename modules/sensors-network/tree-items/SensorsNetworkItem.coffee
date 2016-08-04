@@ -4,11 +4,11 @@ class SensorsNetworkItem extends TreeItem
         super()
 
         @_name.set name
-        @_viewable.set false
-      
+
     
-#     display_suppl_context_actions: ( context_action )  ->
-#         context_action.push  new TreeAppModule_Floors
-#    
-#     accept_child: ( ch ) ->
-#         ch instanceof FloorItem
+    display_suppl_context_actions: ( context_action )  ->
+        context_action.push  new TreeAppModule_Sensors
+        context_action.push  new TreeAppModule_Display
+
+    accept_child: ( ch ) ->
+        ch instanceof SensorItem

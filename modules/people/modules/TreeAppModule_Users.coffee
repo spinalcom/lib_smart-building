@@ -1,3 +1,4 @@
+#
 class TreeAppModule_Users extends TreeAppModule
     constructor: ->
         super()
@@ -9,7 +10,7 @@ class TreeAppModule_Users extends TreeAppModule
 
         @actions.push
             txt: "Add an user in the building"
-            fa : "fa-user-plus"
+            fa : "fa-user"
             fun: ( evt, app ) =>
 
                 total_floors = 0
@@ -26,13 +27,16 @@ class TreeAppModule_Users extends TreeAppModule
                         
                         user = new UserItem name
 
+                        point = app.selected_canvas_inst()[ 0 ].cm.cam.get_screen_coord [0,0]
+                        user.basic.position.pos.set point
+                        
                         # recup de la hauteur d'un etage pour adapter celle du user
                         smartBuilding = path[ path.length - 2 ]
                         if smartBuilding instanceof SmartBuildingItem
                             for ch in smartBuilding._children when ch instanceof BuildingItem
                                 user._icon._height = ch.geometry.floor_height
                         
-                        people.add_child user
+                        people.add_output user
                         
                         app.data.watch_item user
 
