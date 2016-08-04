@@ -6,6 +6,7 @@ class SmartBuildingItem extends TreeItem
         @_name.set name
         @_viewable.set false
        
+        @add_child new PlansItem
         @add_child new BuildingItem
         @add_child new PeopleItem
         @add_child new SensorsNetworkItem
@@ -17,6 +18,7 @@ class SmartBuildingItem extends TreeItem
         context_action.push new TreeAppModule_Display
    
     accept_child: ( ch ) ->
+        ch instanceof PlansItem or
         ch instanceof BuildingItem or 
         ch instanceof PeopleItem or 
         ch instanceof SensorsNetworkItem or 
