@@ -17,11 +17,11 @@ class ZoneItem extends TreeItem_Parametric
            
         # mesh attributes
         @add_attr
-            _mesh: new Mesh
+            _mesh: new Sketch
             _center: new PointMesher [ 0, 0, @_num.get() * @_height.get() ], 2, 4 
-            _mesh_2d: new Mesh( not_editable: true )
-            _edge_3d: new Mesh( not_editable: true )
-            _mesh_3d: new Mesh( not_editable: true )
+            _mesh_2d: new Sketch( not_editable: true )
+            _edge_3d: new Sketch( not_editable: true )
+            _mesh_3d: new Sketch( not_editable: true )
         
         # mesh conditions
         @_mesh_2d.points = @_mesh.points
@@ -77,7 +77,7 @@ class ZoneItem extends TreeItem_Parametric
             
             for p in @_mesh.points
                 if p.has_been_modified()
-                    p._mv = new MoveScheme_2D_Z( - @_num.get()*@_height.get() )
+                    p._mv = new MoveScheme_2D_Z( @_num.get()*@_height.get() )
                 if @_num.has_been_modified() or @_height.has_been_modified() #or p.pos[1].get() != @_num.get()*@_height.get()
                     p.pos[2].set( @_num.get() * @_height.get() )
                     
