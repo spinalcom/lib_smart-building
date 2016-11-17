@@ -1,0 +1,4 @@
+{
+    "name": "lib_smart-building",
+    "dependencies": {"lib_is-sim": "^1.0.0"}
+}
