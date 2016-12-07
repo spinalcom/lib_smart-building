@@ -1,15 +1,29 @@
 from concat_js import *
 
-smart_building = []
+exec_cmd( "echo \"\" > models.js " )
+exec_cmd( "echo \"\" > processes.js " )
+exec_cmd( "mkdir -p dist " )
+
 
 for p in os.listdir( "modules" ):
-    concat_js( "modules/" + p, "gen/" + p + ".js" )
-    smart_building.append("gen/" + p + ".js")
+    exec_cmd( "echo \"\" > dist/" + p + ".js " )
+    ##########
+    # models #
+    ##########
+    concat_js( "modules/" + p + "/models", "dist/models." + p + ".js" )
+    if os.path.isfile( "dist/models." + p + ".js" ):
+      exec_cmd( "cat dist/models." + p + ".js >> models.js" )
+      exec_cmd( "cat dist/models." + p + ".js >> dist/" + p + ".js " )
+    #############
+    # processes #
+    #############
+    concat_js( "modules/" + p + "/processes", "dist/processes." + p + ".js" )
+    if os.path.isfile( "dist/processes." + p + ".js" ):
+      exec_cmd( "cat dist/processes." + p + ".js >> processes.js" )
+      exec_cmd( "cat dist/processes." + p + ".js >> dist/" + p + ".js " )
 
-exec_cmd( "echo > smart-building.js " )
-
-for m in sorted(smart_building):
-    exec_cmd( "cat smart-building.js " + m + " > smart-building_tmp.js" )
-    exec_cmd( "mv smart-building_tmp.js smart-building.js" ) 
-    
-exec_cmd( "cp smart-building.js ../models/" )
+##########
+# is-sim #
+##########
+concat_js( "modules/", "is-sim.js" )
+exec_cmd( "cat config.js >> is-sim.js " )

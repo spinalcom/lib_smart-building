@@ -75,8 +75,8 @@ def get_files( root ):
                 if f[ 0 ] == ".":
                     continue
                 res.append( File( root + "/" + f, f ) )
-    else:
-        res.append( File( root, os.path.basename( root ) ) )
+    #else:
+    #    res.append( File( root, os.path.basename( root ) ) )
 
     for f in res:
         f.update_prof_rec( res )

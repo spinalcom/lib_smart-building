@@ -4,4 +4,6 @@ all:
 	python	bin/make.py
 
 clean:
-	rm -r gen/; rm -r .gen/; rm smart-building.js
+	rm -rf .gen/ dist/*.js models.js processes.js is-sim.js;
+
+.PHONY: all clean
