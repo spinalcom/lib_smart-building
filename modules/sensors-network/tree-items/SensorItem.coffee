@@ -15,6 +15,7 @@ class SensorItem extends TreeItem_Parametric
         @add_attr
             _icon: new Thermometer2D @basic.position
             _zone_model_id: 0
+            _zone: new Ptr
                 
         @_icon._color = new Color( Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), 255 )
 
@@ -22,7 +23,7 @@ class SensorItem extends TreeItem_Parametric
             color: @_icon._color
  
         @bind =>
-            if @basic.type.num.has_been_modified()
+            if @basic.type.num.has_been_modified() && window?
                 col = @_icon._color
                 h = @_icon._height
                 type = @basic.type.lst[ @basic.type.num.get() ].get() + "2D"
@@ -35,7 +36,8 @@ class SensorItem extends TreeItem_Parametric
         if @_zone_model_id.get() != zoneItem.model_id
             @_zone_model_id.set zoneItem.model_id
             @basic.position.pos.set [ zoneItem.center.pos[0].get(), zoneItem.center.pos[1].get(), zoneItem._height.get()/2 ]
-            
+            # needed for apps outside is'sim
+            @_zone.set(zoneItem)
 
     sub_canvas_items: () ->
         [ @_icon ]
