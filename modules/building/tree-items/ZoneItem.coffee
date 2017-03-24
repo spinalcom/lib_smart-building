@@ -64,14 +64,12 @@ class ZoneItem extends TreeItem_Parametric
         @_old_center.pos.set @center.pos.get()
 
 
-
-    draw: ( info ) ->
+    onchange: ()->
         # quand on glisse-depose un capteur/user sous la zone
         if @_children.has_been_modified()
             for ch in @_children when ( ch instanceof SensorItem or ch instanceof UserItem )
                 ch.update_zone this
-
-
+                
         # quand on crée/déplace les points du contour du mesh
         if ( @_mesh.points.has_been_modified() or @_num.has_been_modified() or @_height.has_been_modified() ) and not @_center_changed.has_been_directly_modified()
 
@@ -91,7 +89,7 @@ class ZoneItem extends TreeItem_Parametric
             @update_center()
 
             @_mesh_shape_changed._signal_change()
-
+            
         # quand on déplace le centre du mesh
         if @center.has_been_modified() and not @_mesh_shape_changed.has_been_directly_modified()
 
@@ -106,6 +104,12 @@ class ZoneItem extends TreeItem_Parametric
 
             @_old_center.pos.set @center.pos.get()
             @_center_changed._signal_change()
+
+
+#     draw: ( info ) ->
+        
+
+        
 
 
     # mettre à jour le centre quand on modifie les points du mesh
