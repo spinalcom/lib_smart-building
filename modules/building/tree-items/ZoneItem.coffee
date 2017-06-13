@@ -63,7 +63,8 @@ class ZoneItem extends TreeItem_Parametric
 
         @_old_center.pos.set @center.pos.get()
 
-
+    cosmetic_attribute: ( name ) ->
+        super( name ) or ( name in [ "_mesh_2d", "_mesh_3d", "_edge_3d" ] )
 
     draw: ( info ) ->
         # quand on glisse-depose un capteur/user sous la zone
